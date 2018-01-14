@@ -16,7 +16,7 @@ class HardcodedClassifier:
         return HardcodedClassifier()
     
     def predict(self, data_test):
-        return np.zeros((data_test.shape[0],), dtype = int)
+        return np.zeros((data_test.shape[0]), dtype = int)
     
     def score(self, x_test, y_test, sample_weight=None):
         return accuracy_score(y_test, self.predict(x_test), sample_weight = sample_weight)
