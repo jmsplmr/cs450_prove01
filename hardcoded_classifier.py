@@ -33,7 +33,8 @@ def main():
 
     model_iris_gaussian_nb(data_test, data_train, target_test, target_train)
     model_iris_hardcoded(data_test, data_train, target_test, target_train)
-
+    np.unique()
+    
 
 def model_iris_hardcoded(data_test, data_train, target_test, target_train):
     hc_classifier = HardcodedClassifier()
