@@ -6,28 +6,21 @@ from sklearn.cross_validation import cross_val_score
 from sklearn.tree.tree import DecisionTreeClassifier
 
 
-# Convert string column to float
-def str_column_to_float(data_set, column):
-    for row in data_set:
-        row[column] = float(row[column].strip())
-
-
 def calc_entropy(groups, classes):
-    # count all samples at split point
     n_instances = float(sum([len(group) for group in groups]))
-    # sum weighted entropy for each group
+    
     entropy = 0.0
     for group in groups:
         size = float(len(group))
-        # avoid divide by zero
+
         if size == 0:
             continue
         score = 0.0
-        # score the group based on the score for each class
+
         for class_val in classes:
             p = [row[-1] for row in group].count(class_val) / size
             score += p * p
-        # weight the group score by its relative size
+
         entropy += (1.0 - score) * (size / n_instances)
     return entropy
 
