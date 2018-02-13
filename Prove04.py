@@ -7,8 +7,8 @@ from sklearn.tree.tree import DecisionTreeClassifier
 
 
 # Convert string column to float
-def str_column_to_float(dataset, column):
-    for row in dataset:
+def str_column_to_float(data_set, column):
+    for row in data_set:
         row[column] = float(row[column].strip())
 
 
@@ -32,7 +32,6 @@ def calc_entropy(groups, classes):
     return entropy
 
 
-# Split a dataset based on an attribute and an attribute value
 def test_split(index, value, data_set):
     left, right = list(), list()
     for row in data_set:
@@ -43,7 +42,6 @@ def test_split(index, value, data_set):
     return left, right
 
 
-# Select the best split point for a dataset
 def do_split(data_set):
     class_values = list(set(row[-1] for row in data_set))
     b_index, b_value, b_score, b_groups = 999, 999, 999, None
@@ -56,35 +54,29 @@ def do_split(data_set):
     return {'index': b_index, 'value': b_value, 'groups': b_groups}
 
 
-# Create a terminal node value
 def create_leaf(group):
     outcomes = [row[-1] for row in group]
     return max(set(outcomes), key=outcomes.count)
 
 
-# Create child splits for a node or make leaf
 def split(node, max_depth, min_size, depth):
     left, right = node['groups']
     del (node['groups'])
     
-    # check for a no split
     if not left or not right:
         node['left'] = node['right'] = create_leaf(left + right)
         return
     
-    # check for max depth
     if depth >= max_depth:
         node['left'], node['right'] = create_leaf(left), create_leaf(right)
         return
     
-    # process left child
     if len(left) <= min_size:
         node['left'] = create_leaf(left)
     else:
         node['left'] = do_split(left)
         split(node['left'], max_depth, min_size, depth + 1)
     
-    # process right child
     if len(right) <= min_size:
         node['right'] = create_leaf(right)
     else:
@@ -92,14 +84,13 @@ def split(node, max_depth, min_size, depth):
         split(node['right'], max_depth, min_size, depth + 1)
 
 
-# Build a decision tree
 def build_tree(train, max_depth, min_size):
     root = do_split(train)
     split(root, max_depth, min_size, 1)
+    print(root)
     return root
 
 
-# Print a decision tree
 def print_tree(node, depth=0):
     if isinstance(node, dict):
         print('%s[X%d < %.3f]' % (depth * ' ', (node['index'] + 1), node['value']))
@@ -109,7 +100,6 @@ def print_tree(node, depth=0):
         print('%s[%s]' % (depth * ' ', node))
 
 
-# Make a prediction with a decision tree
 def predict(node, row):
     if row[node['index']] < node['value']:
         if isinstance(node['left'], dict):
@@ -132,7 +122,6 @@ def decision_tree(train, test, max_depth=5, min_size=10):
     return predictions
 
 
-# Split a dataset into k folds
 def cross_validation_split(data_set, n_folds):
     data_set_split = list()
     data_set_copy = list(data_set)
@@ -146,7 +135,6 @@ def cross_validation_split(data_set, n_folds):
     return data_set_split
 
 
-# Calculate accuracy percentage
 def accuracy(actual, predicted):
     correct = 0
     for i in range(len(actual)):
@@ -155,7 +143,6 @@ def accuracy(actual, predicted):
     return correct / float(len(actual)) * 100.0
 
 
-# Evaluate an algorithm using a cross validation split
 def k_cross_validate(data_set, algorithm, n_folds, *args):
     folds = cross_validation_split(data_set, n_folds)
     scores = list()
